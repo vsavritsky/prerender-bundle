@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+        bootstrap="Tests/bootstrap.php"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        verbose="true"
+        stopOnFailure="false"
+        processIsolation="false"
+        backupGlobals="false"
+        syntaxCheck="true"
+        >
+
+    <testsuites>
+        <testsuite name="PrerenderBundle Test Suite">
+            <directory>./Tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">.</directory>
+            <exclude>
+                <directory>Resources</directory>
+                <directory>Tests</directory>
+                <directory>vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
