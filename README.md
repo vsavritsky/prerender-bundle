@@ -10,7 +10,7 @@ $ php composer.phar require "vsavritsky/prerender-bundle" "^0.1"
 
 Register the bundle in bundles.php:
 
-Vsavritsky\PrerenderBundle\VsavritskyPrerenderBundle::class => ['all' => true],
+Vsavritsky\PrerenderBundle\PrerenderBundle::class => ['all' => true],
 
 Enable the bundle's configuration in `app/config/packages/vsavritsky_prerender.yaml`:
 

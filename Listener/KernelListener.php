@@ -3,9 +3,8 @@
 namespace Vsavritsky\PrerenderBundle\Listener;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Vsavritsky\PrerenderBundle\Event\RenderAfterEvent;
 use Vsavritsky\PrerenderBundle\Event\RenderBeforeEvent;
 use Vsavritsky\PrerenderBundle\Event\ShouldPrerenderEvent;
@@ -89,10 +88,10 @@ class KernelListener
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param RequestEvent $event
      * @return bool
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -123,12 +122,12 @@ class KernelListener
             $scheme = $this->forceSecureRedirect ? 'https' : 'http';
         }
         $uri = rtrim($this->backendUrl, '/').'/'.$scheme.'://'.$request->getHost().$request->getRequestUri();
-
+        
         $eventBefore = new RenderBeforeEvent($request, $uri);
         // @codingStandardsIgnoreStart
         $this->eventDispatcher->dispatch(Events::onBeforeRequest, $eventBefore);
         // @codingStandardsIgnoreEnd
-
+        
         //Check if event get back a response
         if ($eventBefore->hasResponse()) {
             $response = $eventBefore->getResponse();

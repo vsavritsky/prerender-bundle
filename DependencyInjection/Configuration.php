@@ -73,12 +73,12 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('yucca_prerender');
-
+        $treeBuilder = new TreeBuilder('prerender');
+        $rootNode = $treeBuilder->getRootNode();
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.
+        
         $rootNode
             ->children()
                 ->scalarNode('backend_url')
@@ -120,7 +120,7 @@ class Configuration implements ConfigurationInterface
                     ->example('[.css,.js]')
                 ->end()
             ->end();
-
+        
         return $treeBuilder;
     }
 }
