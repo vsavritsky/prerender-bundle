@@ -27,5 +27,6 @@ class PrerenderExtension extends Extension
         $container->setParameter('vsavritsky_prerender.ignored_extensions', $config['ignored_extensions']);
         $container->setParameter('vsavritsky_prerender.whitelist_urls', $config['whitelist_urls']);
         $container->setParameter('vsavritsky_prerender.blacklist_urls', $config['blacklist_urls']);
+        $container->setParameter('vsavritsky_prerender.cache_period', $config['cache_period']);
     }
 }

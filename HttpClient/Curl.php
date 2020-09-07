@@ -2,6 +2,8 @@
 
 namespace Vsavritsky\PrerenderBundle\HttpClient;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class Curl implements ClientInterface
 {
 
@@ -12,7 +14,7 @@ class Curl implements ClientInterface
      * @return mixed
      * @throws Exception
      */
-    public function send($url, $token = '')
+    public function send($url, $token = '') : Response
     {
         // Get cURL resource
         $curl = curl_init();
@@ -23,7 +25,7 @@ class Curl implements ClientInterface
             CURLOPT_USERAGENT => 'Internal-UserAgent',
             CURLOPT_HEADER => 1
         ));
-
+    
         if (!empty($token)) {
             curl_setopt( $curl, CURLOPT_HTTPHEADER, array(
                 'X-Prerender-Token: ' . $token
@@ -45,12 +47,12 @@ class Curl implements ClientInterface
 
         // Close request to clear up some resources
         curl_close($curl);
-
+        
         //Throw an error when not a 200
         if (200 != $httpCode) {
             throw new Exception('Request "'.$url.'" didn\'t run properly : '.$error, (int)$httpCode, null, $header, $body);
         }
-
-        return $body;
+        
+        return new Response($body, $httpCode);
     }
 }

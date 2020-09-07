@@ -119,6 +119,11 @@ class Configuration implements ConfigurationInterface
                     ->info('whitelisted urls. Not routing keys, but urls')
                     ->example('[.css,.js]')
                 ->end()
+                ->scalarNode('cache_period')
+                    ->defaultValue('P7D')
+                    ->info('cache period')
+                    ->example('P7D')
+                ->end()
             ->end();
         
         return $treeBuilder;

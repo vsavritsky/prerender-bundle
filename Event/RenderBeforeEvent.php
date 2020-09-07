@@ -6,10 +6,6 @@ use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Class RenderBeforeEvent
- * @package Yucca\PrerenderBundle\Event
- */
 class RenderBeforeEvent extends Event
 {
     protected $request;

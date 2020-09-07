@@ -28,6 +28,28 @@
             <argument type="service" id="event_dispatcher"/>
             <argument>%vsavritsky_prerender.force_scheme%</argument>
             <argument type="service" id="vsavritsky_prerender.rules.should_prerender"/>
+            <argument type="service" id="Vsavritsky\PrerenderBundle\Service\CacheManager"/>
+        </service>
+
+        <service id="Vsavritsky\PrerenderBundle\Service\CacheManager" class="Vsavritsky\PrerenderBundle\Service\CacheManager">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="vsavritsky_prerender.http_client.curl"/>
+            <argument>%vsavritsky_prerender.backend_url%</argument>
+            <argument>%vsavritsky_prerender.token%</argument>
+            <argument>%vsavritsky_prerender.cache_period%</argument>
+        </service>
+
+        <service id="Vsavritsky\PrerenderBundle\Command\ClearCachePageCommand">
+            <tag name="console.command" command="prerender:cache:clear"/>
+            <argument>prerender:cache:clear</argument>
+            <argument type="service" id="Vsavritsky\PrerenderBundle\Service\CacheManager"/>
+        </service>
+
+        <service id="Vsavritsky\PrerenderBundle\Command\GenerateCachePageCommand">
+            <tag name="console.command" command="prerender:generate:cache"/>
+            <argument>prerender:generate:cache</argument>
+            <argument type="service" id="Vsavritsky\PrerenderBundle\Service\CacheManager"/>
+            <argument type="service" id="Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface"/>
         </service>
     </services>
 </container>
