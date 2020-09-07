@@ -27,6 +27,8 @@ class CacheManager
     
     protected $limit = 10;
     
+    protected $maxCountAttempt = 5;
+    
     public function __construct(
         EntityManagerInterface $entityManager,
         ClientInterface $httpClient,
@@ -78,12 +80,28 @@ class CacheManager
         }
         
         if ($needUpdate) {
+            $attempt = 1;
+    
+            $cachePage->setBody('');
+            
             try {
                 $response = $this->httpClient->send($prerenderUrl, $this->token);
                 $cachePage->setHttpCode($response->getStatusCode());
                 $cachePage->setBody($response->getContent());
             } catch (\Vsavritsky\PrerenderBundle\HttpClient\Exception $e) {
                 var_dump($e->getMessage());
+            }
+            
+            while ($attempt < $this->maxCountAttempt && !$cachePage->getBody()) {
+                try {
+                    $response = $this->httpClient->send($prerenderUrl, $this->token);
+                    $cachePage->setHttpCode($response->getStatusCode());
+                    $cachePage->setBody($response->getContent());
+                } catch (\Vsavritsky\PrerenderBundle\HttpClient\Exception $e) {
+                    var_dump($e->getMessage());
+                }
+    
+                $attempt++;
             }
             
             $this->entityManager->persist($cachePage);
