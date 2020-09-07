@@ -7,12 +7,16 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Vsavritsky\PrerenderBundle\Entity\CachePage;
 use Vsavritsky\PrerenderBundle\HttpClient\Exception;
 use Vsavritsky\PrerenderBundle\Service\CacheManager;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Console\Command\LockableTrait;
 
 class GenerateCachePageCommand extends Command
 {
+    use LockableTrait;
+    
     /** @var CacheManager|null */
     protected $cacheManager = null;
     
@@ -35,6 +39,29 @@ class GenerateCachePageCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if (!$this->lock()) {
+            $output->writeln('The command is already running in another process.');
+        
+            return false;
+        }
+    
+        $progressBar = new ProgressBar($output, $this->cacheManager->getCountCachePages());
+        
+        $page = 1;
+        $cachePages = $this->cacheManager->getCachePagesByPage($page);
+        while (count($cachePages)) {
+            /** @var CachePage $cachePage */
+            foreach ($cachePages as $cachePage) {
+                $progressBar->advance();
+                $response = $this->cacheManager->renderUrl($cachePage->getPath());
+            }
+            
+            $page++;
+            $cachePages = $this->cacheManager->getCachePagesByPage($page);
+        }
+    
+        $progressBar->finish();
+        
         $projectDir = $this->parameterBag->get('kernel.project_dir');
         $pathToSitemap = $projectDir.'/public/'.$input->getArgument('sitemapPath');
     
@@ -49,7 +76,6 @@ class GenerateCachePageCommand extends Command
         
         foreach ($xml->url as $url) {
             $loc = (string)$url->loc;
-            $loc = str_replace('www.', 'dev.', $loc);
             $progressBar->advance();
             $response = $this->cacheManager->renderUrl($loc);
             
