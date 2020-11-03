@@ -4,9 +4,10 @@ namespace Vsavritsky\PrerenderBundle\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Index;
 
 /**
- * @ORM\Table(name="app_prerender_cache")
+ * @ORM\Table(name="app_prerender_cache", indexes={@ORM\Index(name="path", columns={"path"})})
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
